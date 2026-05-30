@@ -100,4 +100,29 @@ class Booking extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function invoice(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
+    public function payout(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ProviderPayout::class);
+    }
+
+    public function commission(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Commission::class);
+    }
+
+    public function refund(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Refund::class);
+    }
+
+    public function proofs(): HasMany
+    {
+        return $this->hasMany(BookingProof::class);
+    }
 }

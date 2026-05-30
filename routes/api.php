@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\MarketplaceController;
 use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\FinanceController;
 use Illuminate\Support\Facades\Route;
 
 // Public health check
@@ -87,6 +88,15 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::put('/crm/leads/{id}', [LeadController::class, 'update']);
     Route::put('/crm/leads/{id}/assign', [LeadController::class, 'assign']);
     Route::post('/crm/leads/{id}/followups', [LeadController::class, 'addFollowup']);
+
+    // Finance & Settlements
+    Route::get('/finance/invoices', [FinanceController::class, 'getInvoices']);
+    Route::get('/finance/invoices/{id}', [FinanceController::class, 'getInvoice']);
+    Route::post('/finance/invoices/{id}/pay', [FinanceController::class, 'processCheckout']);
+    Route::get('/finance/payouts', [FinanceController::class, 'getPayouts']);
+    Route::get('/finance/commissions', [FinanceController::class, 'getCommissions']);
+    Route::post('/bookings/{id}/proofs', [FinanceController::class, 'uploadProof']);
+    Route::post('/bookings/{id}/verify-settlements', [FinanceController::class, 'forceReleaseEscrow']);
 });
 
 // Provider Scoped Portal Endpoints

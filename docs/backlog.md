@@ -86,15 +86,15 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 5: Finance, Billing, Payments, and Settlements
 
-- `[ ] [Must] [S5]` Build invoice generation from confirmed reservations with subtotal, GST, CGST, SGST, IGST, total, payment status, and invoice numbers.
-- `[ ] [Must] [S5]` Build Razorpay and Stripe payment gateway integrations plus webhook verification and transaction logging.
-- `[ ] [Must] [S5]` Build payments ledger with transaction IDs, modes, statuses, and reconciliation fields.
-- `[ ] [Must] [S5]` Build provider payout compiler with platform commission, GST deduction, TDS, final amount, and payment state.
-- `[ ] [Must] [S5]` Build agent commission calculation and release workflow tied to completed bookings.
-- `[ ] [Should] [S5]` Build refunds flow for cancelled bookings, including approval, ledger reversal, and payment gateway refund status.
-- `[ ] [Should] [S5]` Build expenses, outstanding reports, GST reports, revenue reports, and settlement exports.
-- `[ ] [Should] [S5]` Build PDF invoice/receipt generation and email dispatch.
-- `[ ] [Should] [S5]` Enforce proof-verified settlements: payouts and commissions release only after required mounting/night proof approval.
+- `[x] [Must] [S5]` Build invoice generation from confirmed reservations with subtotal, GST, CGST, SGST, IGST, total, payment status, and invoice numbers.
+- `[x] [Must] [S5]` Build Razorpay and Stripe payment gateway integrations plus webhook verification and transaction logging.
+- `[x] [Must] [S5]` Build payments ledger with transaction IDs, modes, statuses, and reconciliation fields.
+- `[x] [Must] [S5]` Build provider payout compiler with platform commission, GST deduction, TDS, final amount, and payment state.
+- `[x] [Must] [S5]` Build agent commission calculation and release workflow tied to completed bookings.
+- `[x] [Should] [S5]` Build refunds flow for cancelled bookings, including approval, ledger reversal, and payment gateway refund status.
+- `[x] [Should] [S5]` Build expenses, outstanding reports, GST reports, revenue reports, and settlement exports.
+- `[x] [Should] [S5]` Build PDF invoice/receipt generation and email dispatch.
+- `[x] [Should] [S5]` Enforce proof-verified settlements: payouts and commissions release only after required mounting/night proof approval.
 
 ## Sprint 6: Portals, Dashboards, Reports, and Notifications
 
