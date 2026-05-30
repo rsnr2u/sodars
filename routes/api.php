@@ -11,6 +11,9 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\MarketplaceController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\FinanceController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // Public health check
@@ -97,6 +100,20 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/finance/commissions', [FinanceController::class, 'getCommissions']);
     Route::post('/bookings/{id}/proofs', [FinanceController::class, 'uploadProof']);
     Route::post('/bookings/{id}/verify-settlements', [FinanceController::class, 'forceReleaseEscrow']);
+
+    // Dashboard Metrics
+    Route::get('/dashboard/admin', [DashboardController::class, 'adminMetrics']);
+    Route::get('/dashboard/provider', [DashboardController::class, 'providerMetrics']);
+    Route::get('/dashboard/agent', [DashboardController::class, 'agentMetrics']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/broadcast', [NotificationController::class, 'broadcast']);
+
+    // Reports Export
+    Route::get('/reports/revenue', [ReportController::class, 'exportRevenue']);
+    Route::get('/reports/occupancy', [ReportController::class, 'exportOccupancy']);
 });
 
 // Provider Scoped Portal Endpoints

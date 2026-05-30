@@ -98,15 +98,15 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 6: Portals, Dashboards, Reports, and Notifications
 
-- `[ ] [Must] [S6]` Build Admin Portal sidebar, topbar, dashboard, users/RBAC, branches, locations, providers, inventory, campaigns, bookings, finance, CRM, reports, analytics, notifications, settings, and system tools shell.
-- `[ ] [Must] [S6]` Build Business Portal dashboard, inventory, availability, bookings, campaigns, artworks, proof uploads, finance, reports, staff, notifications, and settings shell.
-- `[ ] [Must] [S6]` Build Agents Portal dashboard, leads, customers, campaigns, bookings, provider directory, commissions, reports, notifications, and profile shell.
-- `[ ] [Must] [S6]` Build CRM leads, customers, sales pipeline, follow-ups, meetings, notes, conversions, and agent assignment workflows.
-- `[ ] [Must] [S6]` Build notification system for email, SMS, WhatsApp, push, in-app alerts, templates, logs, and broadcast messages.
-- `[ ] [Should] [S6]` Build analytics cache jobs for revenue, bookings, occupancy, provider, campaign, traffic, and geo analytics.
-- `[ ] [Should] [S6]` Build report exports for revenue, provider, campaign, inventory, occupancy, finance, analytics, PDF, Excel, and CSV.
-- `[ ] [Should] [S6]` Build dashboard cards and charts using the documented UI/UX system, Recharts, Lucide icons, and portal-specific layouts.
-- `[ ] [Should] [S6]` Build branch portal MVP for district-scoped providers, inventory, campaigns, bookings, finance, CRM, reports, staff, and settings.
+- `[x] [Must] [S6]` Build Admin Portal sidebar, topbar, dashboard, users/RBAC, branches, locations, providers, inventory, campaigns, bookings, finance, CRM, reports, analytics, notifications, settings, and system tools shell.
+- `[x] [Must] [S6]` Build Business Portal dashboard, inventory, availability, bookings, campaigns, artworks, proof uploads, finance, reports, staff, notifications, and settings shell.
+- `[x] [Must] [S6]` Build Agents Portal dashboard, leads, customers, campaigns, bookings, provider directory, commissions, reports, notifications, and profile shell.
+- `[x] [Must] [S6]` Build CRM leads, customers, sales pipeline, follow-ups, meetings, notes, conversions, and agent assignment workflows.
+- `[x] [Must] [S6]` Build notification system for email, SMS, WhatsApp, push, in-app alerts, templates, logs, and broadcast messages.
+- `[x] [Should] [S6]` Build analytics cache jobs for revenue, bookings, occupancy, provider, campaign, traffic, and geo analytics.
+- `[x] [Should] [S6]` Build report exports for revenue, provider, campaign, inventory, occupancy, finance, analytics, PDF, Excel, and CSV.
+- `[x] [Should] [S6]` Build dashboard cards and charts using the documented UI/UX system, Recharts, Lucide icons, and portal-specific layouts.
+- `[x] [Should] [S6]` Build branch portal MVP for district-scoped providers, inventory, campaigns, bookings, finance, CRM, reports, staff, and settings.
 
 ## Sprint 7: Storage, Security, DevOps, and Quality Gates
 

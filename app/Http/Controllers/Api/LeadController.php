@@ -80,7 +80,29 @@ class LeadController extends Controller
             'remarks' => ['nullable', 'string'],
         ]);
 
+        $oldStatus = $lead->status;
         $lead->update($payload);
+
+        if ($lead->status === 'Converted' && $oldStatus !== 'Converted') {
+            $yearMonthDay = now()->format('Ymd');
+            $count = \App\Models\Campaign::whereDate('created_at', now()->toDateString())->count() + 1;
+            $campaignCode = sprintf('CMP-%s-%04d', $yearMonthDay, $count);
+
+            \App\Models\Campaign::create([
+                'campaign_code' => $campaignCode,
+                'title' => sprintf('Campaign for %s', $lead->company_name ?? $lead->name),
+                'advertiser_name' => $lead->company_name ?? $lead->name,
+                'customer_name' => $lead->name,
+                'customer_mobile' => $lead->mobile,
+                'customer_email' => $lead->email,
+                'budget' => 0.00,
+                'start_date' => now()->toDateString(),
+                'end_date' => now()->addMonth()->toDateString(),
+                'status' => 'Draft',
+                'notes' => 'Auto-drafted from converted CRM lead.',
+                'created_by' => $lead->agent_id ?? $request->user()->id ?? \App\Models\User::first()->id,
+            ]);
+        }
 
         return $this->success([
             'lead' => $lead,

@@ -59,4 +59,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function notifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
 }
