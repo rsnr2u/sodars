@@ -34,4 +34,9 @@ class ProviderStaff extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function provider(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Provider::class, 'provider_id');
+    }
 }

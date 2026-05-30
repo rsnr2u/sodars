@@ -45,17 +45,17 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 2: Provider Onboarding and Inventory Core
 
-- `[ ] [Must] [S2]` Build provider registration, profile update, KYC document upload, PAN/GST validation fields, and status lifecycle: Pending, Approved, Rejected, Suspended, Inactive.
-- `[ ] [Must] [S2]` Build Admin provider approval, rejection, suspension, document review, bank account review, and marketplace enablement workflows.
-- `[ ] [Must] [S2]` Build provider staff accounts with provider-scoped permissions and Business Portal access.
-- `[ ] [Must] [S2]` Build inventory CRUD for hoardings, digital screens, transit media, bus shelters, mall media, and airport media.
-- `[ ] [Must] [S2]` Build inventory gallery upload APIs for images, video, drone media, primary media selection, ordering, and deletion.
-- `[ ] [Must] [S2]` Build inventory pricing rules for daily, weekly, monthly, festival, special, and date-bounded seasonal pricing.
-- `[ ] [Must] [S2]` Build inventory maintenance and blocked-date records that feed availability checks.
-- `[ ] [Must] [S2]` Build map coordinate capture and Google Maps/Places integration hooks for inventory geotags.
-- `[ ] [Should] [S2]` Build provider and inventory verification queues for Admin and Branch portals.
-- `[ ] [Should] [S2]` Build Business Portal inventory list, add/edit forms, media gallery, pricing, map pin, and maintenance screens.
-- `[ ] [Should] [S2]` Add image optimization, video processing, and WebP compression pipeline for uploaded inventory media.
+- `[x] [Must] [S2]` Build provider registration, profile update, KYC document upload, PAN/GST validation fields, and status lifecycle: Pending, Approved, Rejected, Suspended, Inactive.
+- `[x] [Must] [S2]` Build Admin provider approval, rejection, suspension, document review, bank account review, and marketplace enablement workflows.
+- `[x] [Must] [S2]` Build provider staff accounts with provider-scoped permissions and Business Portal access.
+- `[x] [Must] [S2]` Build inventory CRUD for hoardings, digital screens, transit media, bus shelters, mall media, and airport media.
+- `[x] [Must] [S2]` Build inventory gallery upload APIs for images, video, drone media, primary media selection, ordering, and deletion.
+- `[x] [Must] [S2]` Build inventory pricing rules for daily, weekly, monthly, festival, special, and date-bounded seasonal pricing.
+- `[x] [Must] [S2]` Build inventory maintenance and blocked-date records that feed availability checks.
+- `[x] [Must] [S2]` Build map coordinate capture and Google Maps/Places integration hooks for inventory geotags.
+- `[x] [Should] [S2]` Build provider and inventory verification queues for Admin and Branch portals.
+- `[x] [Should] [S2]` Build Business Portal inventory list, add/edit forms, media gallery, pricing, map pin, and maintenance screens.
+- `[x] [Should] [S2]` Add image optimization, video processing, and WebP compression pipeline for uploaded inventory media.
 
 ## Sprint 3: Campaigns, Booking Holds, and Availability Engine
 
