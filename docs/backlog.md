@@ -59,18 +59,18 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 3: Campaigns, Booking Holds, and Availability Engine
 
-- `[ ] [Must] [S3]` Build campaign CRUD as the parent entity for multi-inventory advertising schedules.
-- `[ ] [Must] [S3]` Build campaign location targets, budget fields, advertiser/customer fields, campaign status lifecycle, and allocations.
-- `[ ] [Must] [S3]` Build booking creation through a Booking Engine service, not direct CRUD, enforcing campaign, inventory, provider, date, pricing, and tax snapshots.
-- `[ ] [Must] [S3]` Implement the Availability Engine with checks for booking calendar overlap, temporary Redis holds, maintenance blocks, provider manual blocks, and duplicate reservations.
-- `[ ] [Must] [S3]` Implement Redis atomic 30-minute hold locks for inventory/date ranges and release expired holds through a scheduled worker.
-- `[ ] [Must] [S3]` Write `booking_calendar` rows as the availability source of truth, with composite uniqueness around `inventory_id` and `date`.
-- `[ ] [Must] [S3]` Build provider approval and rejection flow before invoice/payment release.
-- `[ ] [Must] [S3]` Build booking lifecycle transitions: Draft, Temporary Reserved, Approval Pending, Reserved, Confirmed, Active, Completed, Cancelled, Rejected, Expired.
-- `[ ] [Should] [S3]` Build conflict logging into `booking_conflicts` and dashboards to resolve overlap, maintenance, provider block, and duplicate reservation cases.
-- `[ ] [Should] [S3]` Build booking calendar views for Admin and Business portals.
-- `[ ] [Should] [S3]` Build artwork upload and approval flow before campaign activation.
-- `[ ] [Should] [S3]` Build booking logs for all status transitions with portal source, user, remarks, and IP address.
+- `[x] [Must] [S3]` Build campaign CRUD as the parent entity for multi-inventory advertising schedules.
+- `[x] [Must] [S3]` Build campaign location targets, budget fields, advertiser/customer fields, campaign status lifecycle, and allocations.
+- `[x] [Must] [S3]` Build booking creation through a Booking Engine service, not direct CRUD, enforcing campaign, inventory, provider, date, pricing, and tax snapshots.
+- `[x] [Must] [S3]` Implement the Availability Engine with checks for booking calendar overlap, temporary Redis holds, maintenance blocks, provider manual blocks, and duplicate reservations.
+- `[x] [Must] [S3]` Implement Redis atomic 30-minute hold locks for inventory/date ranges and release expired holds through a scheduled worker.
+- `[x] [Must] [S3]` Write `booking_calendar` rows as the availability source of truth, with composite uniqueness around `inventory_id` and `date`.
+- `[x] [Must] [S3]` Build provider approval and rejection flow before invoice/payment release.
+- `[x] [Must] [S3]` Build booking lifecycle transitions: Draft, Temporary Reserved, Approval Pending, Reserved, Confirmed, Active, Completed, Cancelled, Rejected, Expired.
+- `[x] [Should] [S3]` Build conflict logging into `booking_conflicts` and dashboards to resolve overlap, maintenance, provider block, and duplicate reservation cases.
+- `[x] [Should] [S3]` Build booking calendar views for Admin and Business portals.
+- `[x] [Should] [S3]` Build artwork upload and approval flow before campaign activation.
+- `[x] [Should] [S3]` Build booking logs for all status transitions with portal source, user, remarks, and IP address.
 
 ## Sprint 4: Marketplace, Search, Maps, and Lead Capture
 

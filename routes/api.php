@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ProviderAuthController;
 use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\InventoryController;
+use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\BookingController;
 use Illuminate\Support\Facades\Route;
 
 // Public health check
@@ -65,6 +67,18 @@ Route::prefix('locations')->group(function (): void {
         ->defaults('parentColumn', 'area_id');
 });
 
+// User (Admin/Agent/Advertiser) Scoped Portal Endpoints
+Route::middleware('auth:sanctum')->group(function (): void {
+    // Campaign CRUD
+    Route::apiResource('campaigns', CampaignController::class);
+
+    // Booking Hold locks and creation
+    Route::post('/bookings/hold', [BookingController::class, 'store']);
+    Route::post('/bookings/{id}/artwork', [BookingController::class, 'uploadArtwork']);
+    Route::post('/bookings/{id}/artwork/{artId}/approve', [BookingController::class, 'approveArtwork']);
+    Route::get('/bookings/{id}/logs', [BookingController::class, 'logs']);
+});
+
 // Provider Scoped Portal Endpoints
 Route::prefix('provider')->middleware('auth:sanctum')->group(function (): void {
     Route::put('/profile', [ProviderController::class, 'updateProfile']);
@@ -103,6 +117,11 @@ Route::prefix('provider')->middleware('auth:sanctum')->group(function (): void {
     Route::get('/inventory/{id}/maintenance', [InventoryController::class, 'getMaintenance']);
     Route::post('/inventory/{id}/maintenance', [InventoryController::class, 'storeMaintenance']);
     Route::delete('/inventory/{id}/maintenance/{maintenanceId}', [InventoryController::class, 'deleteMaintenance']);
+
+    // Provider booking approvals/rejections
+    Route::post('/bookings/{id}/provider-approve', [BookingController::class, 'providerApprove']);
+    Route::post('/bookings/{id}/provider-reject', [BookingController::class, 'providerReject']);
+    Route::get('/bookings/{id}/logs', [BookingController::class, 'logs']);
 });
 
 // Admin Scoped Portal Endpoints
