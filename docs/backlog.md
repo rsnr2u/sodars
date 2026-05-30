@@ -31,17 +31,17 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 1: Foundations, Database, Auth, and Locations
 
-- `[ ] [Must] [S1]` Create the Laravel 12 API application, module structure, route groups, standardized JSON response envelopes, exception responses, and API versioning.
-- `[ ] [Must] [S1]` Create frontend application shells for Website, Admin, Business, and Agents portals using the documented stack split: Blade/Tailwind for website and React/Vite/Redux/shadcn for portals.
-- `[ ] [Must] [S1]` Convert the 49-table `database/database_schema.md` SQL blueprint into Laravel migrations with foreign keys, soft deletes where required, and deterministic migration order.
-- `[ ] [Must] [S1]` Add base seeders for roles, permissions, users, tax settings, core settings, and initial location taxonomy.
-- `[ ] [Must] [S1]` Implement Sanctum authentication for users and provider staff with login, logout, profile, password reset, token revocation, and session tracking.
-- `[ ] [Must] [S1]` Implement Spatie permission gates for Admin, Branch Manager, Provider Owner, Provider Staff, Agent, Advertiser, Finance, and Operations roles.
-- `[ ] [Must] [S1]` Build countries, states, districts, cities, areas, landmarks, and roads CRUD APIs plus dependent dropdown endpoints.
-- `[ ] [Must] [S1]` Add geospatial indexes and lookup caches for high-volume location filters.
-- `[ ] [Must] [S1]` Configure local environment files, queue connection, cache connection, database connection, storage disks, and development setup notes.
-- `[ ] [Should] [S1]` Add user sessions, activity logs, and audit logs for sensitive identity and configuration changes.
-- `[ ] [Should] [S1]` Add API request validation classes, resource serializers, pagination, filtering, sorting, and status conventions across foundation modules.
+- `[x] [Must] [S1]` Create the Laravel 12 API application, module structure, route groups, standardized JSON response envelopes, exception responses, and API versioning.
+- `[x] [Must] [S1]` Create frontend application shells for Website, Admin, Business, and Agents portals using the documented stack split: Blade/Tailwind for website and React/Vite/Redux/shadcn for portals.
+- `[x] [Must] [S1]` Convert the 49-table `database/database_schema.md` SQL blueprint into Laravel migrations with foreign keys, soft deletes where required, and deterministic migration order.
+- `[x] [Must] [S1]` Add base seeders for roles, permissions, users, tax settings, core settings, and initial location taxonomy.
+- `[x] [Must] [S1]` Implement Sanctum authentication for users and provider staff with login, logout, profile, password reset, token revocation, and session tracking.
+- `[x] [Must] [S1]` Implement Spatie permission gates for Admin, Branch Manager, Provider Owner, Provider Staff, Agent, Advertiser, Finance, and Operations roles.
+- `[x] [Must] [S1]` Build countries, states, districts, cities, areas, landmarks, and roads CRUD APIs plus dependent dropdown endpoints.
+- `[x] [Must] [S1]` Add geospatial indexes and lookup caches for high-volume location filters.
+- `[x] [Must] [S1]` Configure local environment files, queue connection, cache connection, database connection, storage disks, and development setup notes.
+- `[x] [Should] [S1]` Add user sessions, activity logs, and audit logs for sensitive identity and configuration changes.
+- `[x] [Should] [S1]` Add API request validation classes, resource serializers, pagination, filtering, sorting, and status conventions across foundation modules.
 
 ## Sprint 2: Provider Onboarding and Inventory Core
 
