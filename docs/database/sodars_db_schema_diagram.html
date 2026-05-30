@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SODARS Complete Database Schema Relational Diagram</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f6f8;
+            --grid-color: rgba(0, 0, 0, 0.04);
+            --card-bg: #ffffff;
+            --card-border: #e1e4e8;
+            --header-bg: #0B3D2E; /* Primary Dark Emerald Green */
+            --header-text: #ffffff;
+            --text-color: #24292e;
+            --text-muted: #6a737d;
+            --line-color: #cfd7df;
+            --line-active: #C96A0A; /* Accent Saffron Line */
+            --line-width: 2.5px;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            --mono-font: 'JetBrains Mono', monospace;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.06);
+            --accent-header: #C96A0A; /* Accent Saffron Header */
+            --accent-border: #C96A0A;
+            --accent-border-hover: #E65100;
+        }
+
+        .dark-mode {
+            --bg-color: #0c0e12;
+            --grid-color: rgba(255, 255, 255, 0.02);
+            --card-bg: #14181f;
+            --card-border: #2d333b;
+            --header-bg: #092c22;
+            --header-text: #f0f6fc;
+            --text-color: #c9d1d9;
+            --text-muted: #768390;
+            --line-color: #2e353f;
+            --line-active: #f28c28; /* Light Saffron active line */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --accent-header: #C96A0A;
+            --accent-border: #f28c28;
+            --accent-border-hover: #ffaa44;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Dotted Grid Background */
+        .workspace {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-image: radial-gradient(var(--grid-color) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            cursor: grab;
+        }
+
+        .workspace:active {
+            cursor: grabbing;
+        }
+
+        .workspace-canvas {
+            position: absolute;
+            width: 2800px;
+            height: 1750px;
+            transform-origin: 0 0;
+        }
+
+        /* SVG Connections Layer */
+        svg.connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        svg.connections path {
+            fill: none;
+            stroke: var(--line-color);
+            stroke-width: var(--line-width);
+            transition: stroke 0.1s ease, stroke-width 0.1s ease;
+        }
+
+        svg.connections path.active {
+            stroke: var(--line-active);
+            stroke-width: 3.5px;
+            filter: drop-shadow(0 0 5px var(--line-active));
+            stroke-dasharray: 8 4;
+            animation: flow 30s linear infinite;
+            z-index: 2;
+        }
+
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+
+        /* Interactive Controls */
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow);
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .controls h1 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .controls-divider {
+            width: 1px;
+            height: 20px;
+            background-color: var(--card-border);
+        }
+
+        .btn {
+            background: none;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            color: var(--text-color);
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+            background-color: var(--card-bg);
+        }
+
+        .btn:hover {
+            border-color: var(--line-active);
+            color: var(--line-active);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            width: 240px;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--line-active);
+            width: 300px;
+            background-color: var(--card-bg);
+        }
+
+        /* Database Table Cards - Width expanded to 320px */
+        .table-card {
+            position: absolute;
+            width: 320px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            z-index: 5;
+            cursor: default;
+            overflow: hidden;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .table-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--line-active);
+        }
+
+        .table-card.active {
+            z-index: 6;
+            border-color: var(--line-active);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Thicker borders and soft glow for important tables */
+        .table-card.important-glow {
+            border: 2px solid var(--accent-border);
+            box-shadow: 0 0 15px rgba(201, 106, 10, 0.15), var(--shadow);
+        }
+
+        .table-card.important-glow:hover {
+            box-shadow: 0 0 25px rgba(201, 106, 10, 0.3), var(--shadow-hover);
+            border-color: var(--accent-border-hover);
+        }
+
+        .table-header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Important Header Accent */
+        .table-card.important-glow .table-header {
+            background-color: var(--accent-header);
+        }
+
+        .table-header .table-rows-count {
+            font-size: 11px;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 400;
+        }
+
+        .table-card.highlighted .table-header {
+            background-color: #0F5132; /* Hover Emerald Green */
+        }
+        
+        .table-card.important-glow.highlighted .table-header {
+            background-color: var(--accent-border-hover);
+        }
+
+        .table-columns {
+            padding: 4px 0;
+        }
+
+        /* Column Row - Font size increased to 13px */
+        .column-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            font-size: 13px;
+            position: relative;
+            transition: background-color 0.1s ease;
+        }
+
+        .column-row:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .dark-mode .column-row:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .column-row.highlighted {
+            background-color: rgba(43, 92, 143, 0.08);
+            color: var(--line-active);
+        }
+
+        .dark-mode .column-row.highlighted {
+            background-color: rgba(88, 166, 255, 0.15);
+            color: var(--line-active);
+        }
+
+        .column-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow: hidden;
+        }
+
+        .column-name {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .column-row.highlighted .column-name {
+            color: var(--line-active);
+        }
+
+        .column-type {
+            font-family: var(--mono-font);
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Column Badges & Keys */
+        .key-badge {
+            font-size: 11px;
+            color: #d1a110;
+        }
+
+        .fk-badge {
+            font-size: 10px;
+            color: var(--line-active);
+        }
+
+        /* Schema Field Metadata Badges */
+        .col-meta {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 1px 4px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        
+        .null-badge {
+            background-color: rgba(106, 115, 125, 0.1);
+            color: var(--text-muted);
+        }
+        
+        .unique-badge {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: #2e7d32;
+        }
+        
+        .dark-mode .unique-badge {
+            background-color: rgba(57, 211, 83, 0.15);
+            color: #39d353;
+        }
+        
+        .index-badge {
+            background-color: rgba(13, 71, 161, 0.1);
+            color: #0d47a1;
+        }
+        
+        .dark-mode .index-badge {
+            background-color: rgba(88, 166, 255, 0.15);
+            color: #58a6ff;
+        }
+        
+        .enum-badge {
+            background-color: rgba(201, 106, 10, 0.1);
+            color: #c96a0a;
+        }
+
+        /* Column Subsystem Group Labels */
+        .engine-label {
+            position: absolute;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            width: 320px;
+            text-align: center;
+            border-bottom: 2px dashed var(--card-border);
+            padding-bottom: 8px;
+            pointer-events: none;
+        }
+
+        /* Legend Footer */
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+            box-shadow: var(--shadow);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-icon {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Zoom indicator */
+        .zoom-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Upper Controls Panel -->
+    <div class="controls">
+        <h1>SODARS Master Schema Diagram</h1>
+        <div class="controls-divider"></div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search 26 tables or columns..." autocomplete="off">
+        </div>
+        <button class="btn" id="resetBtn">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                <path d="M8 4.4a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 1 0v3a.5.5 0 0 1-.5.5z"/>
+                <path d="M8 2a.5.5 0 0 1-.4-.8l3-3a.5.5 0 1 1 .7.7l-3 3A.5.5 0 0 1 8 2z"/>
+            </svg>
+            Reset Layout
+        </button>
+        <button class="btn" id="themeBtn">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zM4.464 11.536a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm8.486 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM3.05 2.343a.5.5 0 0 1 .707 0L5.171 3.757a.5.5 0 0 1-.707.707L3.05 3.05a.5.5 0 0 1 0-.707z"/>
+            </svg>
+            Theme
+        </button>
+    </div>
+
+    <!-- Zoom indicator -->
+    <div class="zoom-indicator">
+        <span>Zoom: 100%</span>
+    </div>
+
+    <!-- Workspace Container -->
+    <div class="workspace" id="workspace">
+        <div class="workspace-canvas" id="canvas">
+            
+            <!-- SVG Connector Layer -->
+            <svg class="connections" id="connectionsSvg"></svg>
+
+            <!-- Column Engine Labels -->
+            <div class="engine-label" style="left: 60px; top: 70px;">LOCATION ENGINE</div>
+            <div class="engine-label" style="left: 440px; top: 70px;">BRANCH & PROVIDERS</div>
+            <div class="engine-label" style="left: 820px; top: 70px;">INVENTORY ENGINE</div>
+            <div class="engine-label" style="left: 1200px; top: 70px;">CAMPAIGN ENGINE</div>
+            <div class="engine-label" style="left: 1580px; top: 70px;">BOOKING ENGINE (CORE)</div>
+            <div class="engine-label" style="left: 1960px; top: 70px;">FINANCE ENGINE</div>
+            <div class="engine-label" style="left: 2340px; top: 70px;">CRM & SECURITY</div>
+
+            <!-- ========================================================================= -->
+            <!-- 1. LOCATION SUBSYSTEM (Col 1: X=60) -->
+            <!-- ========================================================================= -->
+
+            <!-- countries -->
+            <div class="table-card" id="tbl-countries">
+                <div class="table-header">countries <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="countries.code"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">code</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="countries.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="countries.continent_name"><div class="column-info"><span class="column-name">continent_name</span></div><span class="column-type">varchar</span></div>
+                </div>
+            </div>
+
+            <!-- states -->
+            <div class="table-card" id="tbl-states">
+                <div class="table-header">states <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="states.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="states.country_code"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">country_code</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="states.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                </div>
+            </div>
+
+            <!-- districts -->
+            <div class="table-card" id="tbl-districts">
+                <div class="table-header">districts <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="districts.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="districts.state_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">state_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="districts.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                </div>
+            </div>
+
+            <!-- cities -->
+            <div class="table-card" id="tbl-cities">
+                <div class="table-header">cities <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="cities.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="cities.district_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">district_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="cities.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                </div>
+            </div>
+
+            <!-- areas -->
+            <div class="table-card" id="tbl-areas">
+                <div class="table-header">areas <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="areas.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="areas.city_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">city_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="areas.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                </div>
+            </div>
+
+            <!-- roads -->
+            <div class="table-card" id="tbl-roads">
+                <div class="table-header">roads <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="roads.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="roads.area_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">area_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="roads.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="roads.latitude"><div class="column-info"><span class="column-name">latitude</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="roads.longitude"><div class="column-info"><span class="column-name">longitude</span></div><span class="column-type">decimal</span></div>
+                </div>
+            </div>
+
+
+            <!-- ========================================================================= -->
+            <!-- 2. BRANCH & PROVIDERS SUBSYSTEM (Col 2: X=440) -->
+            <!-- ========================================================================= -->
+
+            <!-- branches -->
+            <div class="table-card" id="tbl-branches">
+                <div class="table-header">branches <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="branches.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="branches.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="branches.owner_name"><div class="column-info"><span class="column-name">owner_name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="branches.email"><div class="column-info"><span class="column-name">email</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="branches.mobile"><div class="column-info"><span class="column-name">mobile</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="branches.state_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">state_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="branches.district_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">district_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="branches.commission_percentage"><div class="column-info"><span class="column-name">commission_percentage</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="branches.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="branches.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- providers -->
+            <div class="table-card" id="tbl-providers">
+                <div class="table-header">providers <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="providers.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="providers.branch_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">branch_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="providers.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="providers.email"><div class="column-info"><span class="column-name">email</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="providers.mobile"><div class="column-info"><span class="column-name">mobile</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="providers.gst_number"><div class="column-info"><span class="column-name">gst_number</span><span class="col-meta unique-badge">UQ</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="providers.city_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">city_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="providers.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="providers.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- provider_staff -->
+            <div class="table-card" id="tbl-provider_staff">
+                <div class="table-header">provider_staff <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="provider_staff.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="provider_staff.provider_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">provider_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="provider_staff.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_staff.email"><div class="column-info"><span class="column-name">email</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_staff.role"><div class="column-info"><span class="column-name">role</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_staff.password"><div class="column-info"><span class="column-name">password</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_staff.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_staff.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+
+            <!-- ========================================================================= -->
+            <!-- 3. INVENTORY ENGINE (Col 3: X=820) - GLOW! -->
+            <!-- ========================================================================= -->
+
+            <!-- inventory -->
+            <div class="table-card important-glow" id="tbl-inventory">
+                <div class="table-header">inventory <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="inventory.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory.provider_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">provider_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory.road_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">road_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory.media_type"><div class="column-info"><span class="column-name">media_type</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory.size"><div class="column-info"><span class="column-name">size</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory.lighting"><div class="column-info"><span class="column-name">lighting</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory.latitude"><div class="column-info"><span class="column-name">latitude</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="inventory.longitude"><div class="column-info"><span class="column-name">longitude</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="inventory.daily_rate"><div class="column-info"><span class="column-name">daily_rate</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="inventory.status"><div class="column-info"><span class="column-name">status</span><span class="col-meta enum-badge">ENUM</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- inventory_gallery -->
+            <div class="table-card" id="tbl-inventory_gallery">
+                <div class="table-header">inventory_gallery <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="inventory_gallery.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory_gallery.inventory_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">inventory_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory_gallery.image_url"><div class="column-info"><span class="column-name">image_url</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory_gallery.is_primary"><div class="column-info"><span class="column-name">is_primary</span></div><span class="column-type">tinyint</span></div>
+                    <div class="column-row" data-col="inventory_gallery.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- inventory_pricing -->
+            <div class="table-card" id="tbl-inventory_pricing">
+                <div class="table-header">inventory_pricing <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="inventory_pricing.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory_pricing.inventory_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">inventory_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory_pricing.start_date"><div class="column-info"><span class="column-name">start_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="inventory_pricing.end_date"><div class="column-info"><span class="column-name">end_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="inventory_pricing.daily_rate"><div class="column-info"><span class="column-name">daily_rate</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="inventory_pricing.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- inventory_maintenance -->
+            <div class="table-card" id="tbl-inventory_maintenance">
+                <div class="table-header">inventory_maintenance <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="inventory_maintenance.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory_maintenance.inventory_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">inventory_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="inventory_maintenance.from_date"><div class="column-info"><span class="column-name">from_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="inventory_maintenance.to_date"><div class="column-info"><span class="column-name">to_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="inventory_maintenance.reason"><div class="column-info"><span class="column-name">reason</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory_maintenance.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="inventory_maintenance.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- booking_calendar -->
+            <div class="table-card" id="tbl-booking_calendar">
+                <div class="table-header">booking_calendar <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="booking_calendar.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_calendar.inventory_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">inventory_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_calendar.date"><div class="column-info"><span class="column-name">date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="booking_calendar.status"><div class="column-info"><span class="column-name">status</span><span class="col-meta enum-badge">ENUM</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="booking_calendar.booking_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">booking_id</span><span class="col-meta index-badge">IDX</span><span class="col-meta null-badge">NULL</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_calendar.occupancy_type"><div class="column-info"><span class="column-name">occupancy_type</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="booking_calendar.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+
+            <!-- ========================================================================= -->
+            <!-- 4. CAMPAIGN ENGINE (Col 4: X=1200) - GLOW! -->
+            <!-- ========================================================================= -->
+
+            <!-- campaigns -->
+            <div class="table-card important-glow" id="tbl-campaigns">
+                <div class="table-header">campaigns <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="campaigns.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaigns.user_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">user_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaigns.campaign_name"><div class="column-info"><span class="column-name">campaign_name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="campaigns.description"><div class="column-info"><span class="column-name">description</span></div><span class="column-type">text</span></div>
+                    <div class="column-row" data-col="campaigns.budget"><div class="column-info"><span class="column-name">budget</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="campaigns.start_date"><div class="column-info"><span class="column-name">start_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="campaigns.end_date"><div class="column-info"><span class="column-name">end_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="campaigns.status"><div class="column-info"><span class="column-name">status</span><span class="col-meta enum-badge">ENUM</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="campaigns.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- campaign_locations -->
+            <div class="table-card" id="tbl-campaign_locations">
+                <div class="table-header">campaign_locations <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="campaign_locations.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaign_locations.campaign_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">campaign_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaign_locations.city_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">city_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaign_locations.area_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">area_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaign_locations.road_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">road_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaign_locations.quantity"><div class="column-info"><span class="column-name">quantity</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="campaign_locations.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+
+            <!-- ========================================================================= -->
+            <!-- 5. BOOKING ENGINE (Col 5: X=1580) - HEART OF ERP CORE GLOW! -->
+            <!-- ========================================================================= -->
+
+            <!-- bookings -->
+            <div class="table-card important-glow" id="tbl-bookings" style="border-width: 2.5px; box-shadow: 0 0 20px rgba(201, 106, 10, 0.25);">
+                <div class="table-header" style="font-size: 14.5px; font-weight: 700;">💖 bookings <span class="table-rows-count">CORE</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="bookings.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="bookings.campaign_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">campaign_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="bookings.inventory_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">inventory_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="bookings.provider_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">provider_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="bookings.start_date"><div class="column-info"><span class="column-name">start_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="bookings.end_date"><div class="column-info"><span class="column-name">end_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="bookings.total_amount"><div class="column-info"><span class="column-name">total_amount</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="bookings.status"><div class="column-info"><span class="column-name">status</span><span class="col-meta enum-badge">ENUM</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="bookings.approval_status"><div class="column-info"><span class="column-name">approval_status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="bookings.reserved_at"><div class="column-info"><span class="column-name">reserved_at</span></div><span class="column-type">datetime</span></div>
+                    <div class="column-row" data-col="bookings.confirmed_at"><div class="column-info"><span class="column-name">confirmed_at</span></div><span class="column-type">datetime</span></div>
+                    <div class="column-row" data-col="bookings.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- booking_conflicts -->
+            <div class="table-card" id="tbl-booking_conflicts">
+                <div class="table-header">booking_conflicts <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="booking_conflicts.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_conflicts.booking_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">booking_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_conflicts.inventory_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">inventory_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_conflicts.conflict_type"><div class="column-info"><span class="column-name">conflict_type</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="booking_conflicts.conflict_date"><div class="column-info"><span class="column-name">conflict_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="booking_conflicts.reason"><div class="column-info"><span class="column-name">reason</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="booking_conflicts.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- booking_proofs -->
+            <div class="table-card" id="tbl-booking_proofs">
+                <div class="table-header">booking_proofs <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="booking_proofs.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_proofs.booking_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">booking_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_proofs.type"><div class="column-info"><span class="column-name">type</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="booking_proofs.file_url"><div class="column-info"><span class="column-name">file_url</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="booking_proofs.uploaded_by"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">uploaded_by</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="booking_proofs.uploaded_at"><div class="column-info"><span class="column-name">uploaded_at</span></div><span class="column-type">datetime</span></div>
+                    <div class="column-row" data-col="booking_proofs.remarks"><div class="column-info"><span class="column-name">remarks</span></div><span class="column-type">varchar</span></div>
+                </div>
+            </div>
+
+
+            <!-- ========================================================================= -->
+            <!-- 6. FINANCE ENGINE (Col 6: X=1960) - GLOW! -->
+            <!-- ========================================================================= -->
+
+            <!-- invoices -->
+            <div class="table-card important-glow" id="tbl-invoices">
+                <div class="table-header">invoices <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="invoices.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="invoices.booking_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">booking_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="invoices.invoice_number"><div class="column-info"><span class="column-name">invoice_number</span><span class="col-meta unique-badge">UQ</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="invoices.invoice_date"><div class="column-info"><span class="column-name">invoice_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="invoices.subtotal"><div class="column-info"><span class="column-name">subtotal</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="invoices.gst_amount"><div class="column-info"><span class="column-name">gst_amount</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="invoices.total_amount"><div class="column-info"><span class="column-name">total_amount</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="invoices.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="invoices.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- payments -->
+            <div class="table-card" id="tbl-payments">
+                <div class="table-header">payments <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="payments.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="payments.invoice_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">invoice_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="payments.payment_date"><div class="column-info"><span class="column-name">payment_date</span></div><span class="column-type">datetime</span></div>
+                    <div class="column-row" data-col="payments.amount"><div class="column-info"><span class="column-name">amount</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="payments.payment_mode"><div class="column-info"><span class="column-name">payment_mode</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="payments.transaction_id"><div class="column-info"><span class="column-name">transaction_id</span><span class="col-meta unique-badge">UQ</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="payments.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="payments.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- provider_payouts -->
+            <div class="table-card" id="tbl-provider_payouts">
+                <div class="table-header">provider_payouts <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="provider_payouts.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="provider_payouts.provider_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">provider_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="provider_payouts.booking_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">booking_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="provider_payouts.amount"><div class="column-info"><span class="column-name">amount</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="provider_payouts.payout_date"><div class="column-info"><span class="column-name">payout_date</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="provider_payouts.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_payouts.remarks"><div class="column-info"><span class="column-name">remarks</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="provider_payouts.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- commissions -->
+            <div class="table-card" id="tbl-commissions">
+                <div class="table-header">commissions <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="commissions.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="commissions.booking_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">booking_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="commissions.branch_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">branch_id</span><span class="col-meta index-badge">IDX</span><span class="col-meta null-badge">NULL</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="commissions.agent_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">agent_id</span><span class="col-meta index-badge">IDX</span><span class="col-meta null-badge">NULL</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="commissions.amount"><div class="column-info"><span class="column-name">amount</span></div><span class="column-type">decimal</span></div>
+                    <div class="column-row" data-col="commissions.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="commissions.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+
+            <!-- ========================================================================= -->
+            <!-- 7. CRM & SECURITY (Col 7: X=2340) -->
+            <!-- ========================================================================= -->
+
+            <!-- users -->
+            <div class="table-card" id="tbl-users">
+                <div class="table-header">users <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="users.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="users.full_name"><div class="column-info"><span class="column-name">full_name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="users.email"><div class="column-info"><span class="column-name">email</span><span class="col-meta unique-badge">UQ</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="users.password"><div class="column-info"><span class="column-name">password</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="users.role"><div class="column-info"><span class="column-name">role</span><span class="col-meta enum-badge">ENUM</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="users.gender"><div class="column-info"><span class="column-name">gender</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="users.date_of_birth"><div class="column-info"><span class="column-name">date_of_birth</span></div><span class="column-type">date</span></div>
+                    <div class="column-row" data-col="users.country_code"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">country_code</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="users.status"><div class="column-info"><span class="column-name">status</span><span class="col-meta enum-badge">ENUM</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="users.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- leads -->
+            <div class="table-card" id="tbl-leads">
+                <div class="table-header">leads <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="leads.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="leads.user_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">user_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="leads.name"><div class="column-info"><span class="column-name">name</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="leads.email"><div class="column-info"><span class="column-name">email</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="leads.mobile"><div class="column-info"><span class="column-name">mobile</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="leads.source"><div class="column-info"><span class="column-name">source</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="leads.status"><div class="column-info"><span class="column-name">status</span></div><span class="column-type">varchar</span></div>
+                    <div class="column-row" data-col="leads.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+            <!-- lead_followups -->
+            <div class="table-card" id="tbl-lead_followups">
+                <div class="table-header">lead_followups <span class="table-rows-count">PK</span></div>
+                <div class="table-columns">
+                    <div class="column-row" data-col="lead_followups.id"><div class="column-info"><span class="key-badge">🔑</span><span class="column-name">id</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="lead_followups.lead_id"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">lead_id</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="lead_followups.followup_date"><div class="column-info"><span class="column-name">followup_date</span></div><span class="column-type">datetime</span></div>
+                    <div class="column-row" data-col="lead_followups.remarks"><div class="column-info"><span class="column-name">remarks</span></div><span class="column-type">text</span></div>
+                    <div class="column-row" data-col="lead_followups.created_by"><div class="column-info"><span class="fk-badge">🔗</span><span class="column-name">created_by</span><span class="col-meta index-badge">IDX</span></div><span class="column-type">int</span></div>
+                    <div class="column-row" data-col="lead_followups.created_at"><div class="column-info"><span class="column-name">created_at</span></div><span class="column-type">datetime</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Legend Footer -->
+    <div class="legend">
+        <div class="legend-item">
+            <span class="key-badge">🔑</span> Primary Key
+        </div>
+        <div class="legend-item">
+            <span class="fk-badge">🔗</span> Foreign Key
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: var(--line-active);"></span> Selected Reference
+        </div>
+        <div class="legend-item" style="margin-left: 20px;">
+            💡 <em>Drag headers to reposition cards!</em>
+        </div>
+    </div>
+
+    <script>
+        // Zoom and canvas scale
+        let currentZoom = 1;
+        const workspace = document.getElementById('workspace');
+        const canvas = document.getElementById('canvas');
+        const connectionsSvg = document.getElementById('connectionsSvg');
+
+        // Reset layouts to starting spots (beautifully arranged horizontally by column subsystem)
+        const initialPositions = {
+            'tbl-countries': { left: 60, top: 150 },
+            'tbl-states': { left: 60, top: 350 },
+            'tbl-districts': { left: 60, top: 550 },
+            'tbl-cities': { left: 60, top: 750 },
+            'tbl-areas': { left: 60, top: 950 },
+            'tbl-roads': { left: 60, top: 1150 },
+            'tbl-branches': { left: 440, top: 150 },
+            'tbl-providers': { left: 440, top: 500 },
+            'tbl-provider_staff': { left: 440, top: 880 },
+            'tbl-inventory': { left: 820, top: 150 },
+            'tbl-inventory_gallery': { left: 820, top: 580 },
+            'tbl-inventory_pricing': { left: 820, top: 800 },
+            'tbl-inventory_maintenance': { left: 820, top: 1020 },
+            'tbl-booking_calendar': { left: 820, top: 1260 },
+            'tbl-campaigns': { left: 1200, top: 150 },
+            'tbl-campaign_locations': { left: 1200, top: 560 },
+            'tbl-bookings': { left: 1580, top: 150 },
+            'tbl-booking_conflicts': { left: 1580, top: 640 },
+            'tbl-booking_proofs': { left: 1580, top: 920 },
+            'tbl-invoices': { left: 1960, top: 150 },
+            'tbl-payments': { left: 1960, top: 540 },
+            'tbl-provider_payouts': { left: 1960, top: 800 },
+            'tbl-commissions': { left: 1960, top: 1080 },
+            'tbl-users': { left: 2340, top: 150 },
+            'tbl-leads': { left: 2340, top: 560 },
+            'tbl-lead_followups': { left: 2340, top: 860 }
+        };
+
+        // Complete 30+ relationship mappings exactly as shown in visual diagram
+        const relationships = [
+            // Locations
+            { from: 'states.country_code', to: 'countries.code' },
+            { from: 'districts.state_id', to: 'states.id' },
+            { from: 'cities.district_id', to: 'districts.id' },
+            { from: 'areas.city_id', to: 'cities.id' },
+            { from: 'roads.area_id', to: 'areas.id' },
+            
+            // Branch & Providers
+            { from: 'branches.state_id', to: 'states.id' },
+            { from: 'branches.district_id', to: 'districts.id' },
+            { from: 'providers.branch_id', to: 'branches.id' },
+            { from: 'providers.city_id', to: 'cities.id' },
+            { from: 'provider_staff.provider_id', to: 'providers.id' },
+            
+            // Inventory
+            { from: 'inventory.provider_id', to: 'providers.id' },
+            { from: 'inventory.road_id', to: 'roads.id' },
+            { from: 'inventory_gallery.inventory_id', to: 'inventory.id' },
+            { from: 'inventory_pricing.inventory_id', to: 'inventory.id' },
+            { from: 'inventory_maintenance.inventory_id', to: 'inventory.id' },
+            { from: 'booking_calendar.inventory_id', to: 'inventory.id' },
+            { from: 'booking_calendar.booking_id', to: 'bookings.id' },
+            
+            // Bookings & Execution
+            { from: 'bookings.campaign_id', to: 'campaigns.id' },
+            { from: 'bookings.inventory_id', to: 'inventory.id' },
+            { from: 'bookings.provider_id', to: 'providers.id' },
+            { from: 'booking_conflicts.booking_id', to: 'bookings.id' },
+            { from: 'booking_conflicts.inventory_id', to: 'inventory.id' },
+            { from: 'booking_proofs.booking_id', to: 'bookings.id' },
+            { from: 'booking_proofs.uploaded_by', to: 'users.id' },
+
+            // Campaigns & Users
+            { from: 'campaigns.user_id', to: 'users.id' },
+            { from: 'campaign_locations.campaign_id', to: 'campaigns.id' },
+            { from: 'campaign_locations.city_id', to: 'cities.id' },
+            { from: 'campaign_locations.area_id', to: 'areas.id' },
+            { from: 'campaign_locations.road_id', to: 'roads.id' },
+            { from: 'users.country_code', to: 'countries.code' },
+
+            // Finance
+            { from: 'invoices.booking_id', to: 'bookings.id' },
+            { from: 'payments.invoice_id', to: 'invoices.id' },
+            { from: 'provider_payouts.provider_id', to: 'providers.id' },
+            { from: 'provider_payouts.booking_id', to: 'bookings.id' },
+            { from: 'commissions.booking_id', to: 'bookings.id' },
+            { from: 'commissions.branch_id', to: 'branches.id' },
+            { from: 'commissions.agent_id', to: 'users.id' },
+
+            // CRM Leads
+            { from: 'leads.user_id', to: 'users.id' },
+            { from: 'lead_followups.lead_id', to: 'leads.id' },
+            { from: 'lead_followups.created_by', to: 'users.id' }
+        ];
+
+        // Drag & Drop engine for table cards
+        let activeDragCard = null;
+        let activeDragOffset = { x: 0, y: 0 };
+
+        document.querySelectorAll('.table-card').forEach(card => {
+            const header = card.querySelector('.table-header');
+            
+            header.addEventListener('mousedown', (e) => {
+                activeDragCard = card;
+                activeDragCard.classList.add('active');
+                
+                // Track positions relative to canvas scaling
+                const rect = card.getBoundingClientRect();
+                const canvasRect = canvas.getBoundingClientRect();
+                
+                activeDragOffset.x = (e.clientX - rect.left) / currentZoom;
+                activeDragOffset.y = (e.clientY - rect.top) / currentZoom;
+                
+                document.addEventListener('mousemove', handleCardDrag);
+                document.addEventListener('mouseup', stopCardDrag);
+                e.preventDefault();
+            });
+
+            // Column highlights & relationship hover alerts
+            card.querySelectorAll('.column-row').forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    const colName = row.getAttribute('data-col');
+                    highlightRelations(colName);
+                });
+
+                row.addEventListener('mouseleave', () => {
+                    clearHighlights();
+                });
+            });
+        });
+
+        function handleCardDrag(e) {
+            if (!activeDragCard) return;
+            
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            let targetX = (e.clientX - canvasRect.left) / currentZoom - activeDragOffset.x;
+            let targetY = (e.clientY - canvasRect.top) / currentZoom - activeDragOffset.y;
+            
+            // Constrain inside virtual workspace coordinates
+            targetX = Math.max(10, Math.min(2700, targetX));
+            targetY = Math.max(10, Math.min(1700, targetY));
+            
+            activeDragCard.style.left = `${targetX}px`;
+            activeDragCard.style.top = `${targetY}px`;
+            
+            drawConnections();
+        }
+
+        function stopCardDrag() {
+            if (activeDragCard) {
+                activeDragCard.classList.remove('active');
+            }
+            activeDragCard = null;
+            document.removeEventListener('mousemove', handleCardDrag);
+            document.removeEventListener('mouseup', stopCardDrag);
+        }
+
+        // Draw curved lines (S-curves) connecting table columns
+        function drawConnections(activeCol = null) {
+            connectionsSvg.innerHTML = '';
+            
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            relationships.forEach(rel => {
+                const fromEl = document.querySelector(`[data-col="${rel.from}"]`);
+                const toEl = document.querySelector(`[data-col="${rel.to}"]`);
+                
+                if (!fromEl || !toEl) return;
+                
+                const fromRect = fromEl.getBoundingClientRect();
+                const toRect = toEl.getBoundingClientRect();
+                
+                // Get absolute positions in the canvas grid coordinate space
+                const x1 = (fromRect.left - canvasRect.left) / currentZoom;
+                const y1 = (fromRect.top + fromRect.height / 2 - canvasRect.top) / currentZoom;
+                
+                const x2 = (toRect.right - canvasRect.left) / currentZoom;
+                const y2 = (toRect.top + toRect.height / 2 - canvasRect.top) / currentZoom;
+                
+                // Draw elegant curved lines
+                let controlOffset = Math.max(60, Math.abs(x2 - x1) * 0.45);
+                
+                // Make lines originate gracefully from the closest side of the cards
+                const startX = fromRect.left < toRect.left ? (fromRect.right - canvasRect.left) / currentZoom : (fromRect.left - canvasRect.left) / currentZoom;
+                const endX = toRect.left < fromRect.left ? (toRect.right - canvasRect.left) / currentZoom : (toRect.left - canvasRect.left) / currentZoom;
+                
+                let cp1_x = startX + (startX < endX ? controlOffset : -controlOffset);
+                let cp2_x = endX + (endX < startX ? controlOffset : -controlOffset);
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const d = `M ${startX} ${y1} C ${cp1_x} ${y1}, ${cp2_x} ${y2}, ${endX} ${y2}`;
+                
+                path.setAttribute('d', d);
+                
+                // Highlight path if hovered
+                if (activeCol && (rel.from === activeCol || rel.to === activeCol)) {
+                    path.setAttribute('class', 'active');
+                }
+                
+                connectionsSvg.appendChild(path);
+            });
+        }
+
+        // Highlight column relationships
+        function highlightRelations(colName) {
+            clearHighlights();
+            
+            const connectedCols = new Set([colName]);
+            relationships.forEach(rel => {
+                if (rel.from === colName) connectedCols.add(rel.to);
+                if (rel.to === colName) connectedCols.add(rel.from);
+            });
+            
+            connectedCols.forEach(col => {
+                const el = document.querySelector(`[data-col="${col}"]`);
+                if (el) el.classList.add('highlighted');
+            });
+            
+            drawConnections(colName);
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.column-row').forEach(row => {
+                row.classList.remove('highlighted');
+            });
+            drawConnections();
+        }
+
+        // Search engine filter
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            document.querySelectorAll('.table-card').forEach(card => {
+                let matchesTable = card.id.toLowerCase().includes(query);
+                let matchesColumns = false;
+                
+                card.querySelectorAll('.column-row').forEach(row => {
+                    const colName = row.getAttribute('data-col').split('.')[1].toLowerCase();
+                    const isMatched = colName.includes(query);
+                    if (isMatched && query !== '') {
+                        row.classList.add('highlighted');
+                        matchesColumns = true;
+                    } else if (query === '') {
+                        row.classList.remove('highlighted');
+                    }
+                });
+                
+                if (query === '') {
+                    card.style.opacity = '1';
+                } else if (matchesTable || matchesColumns) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1.02)';
+                    setTimeout(() => card.style.transform = 'none', 200);
+                } else {
+                    card.style.opacity = '0.35';
+                }
+            });
+            
+            drawConnections();
+        });
+
+        // Toggle Theme
+        const themeBtn = document.getElementById('themeBtn');
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            drawConnections();
+        });
+
+        // Reset layout positioning
+        const resetBtn = document.getElementById('resetBtn');
+        resetBtn.addEventListener('click', () => {
+            Object.keys(initialPositions).forEach(id => {
+                const card = document.getElementById(id);
+                if (card) {
+                    card.style.left = `${initialPositions[id].left}px`;
+                    card.style.top = `${initialPositions[id].top}px`;
+                }
+            });
+            searchInput.value = '';
+            document.querySelectorAll('.table-card').forEach(card => card.style.opacity = '1');
+            clearHighlights();
+            drawConnections();
+        });
+
+        // Initial setup
+        window.addEventListener('load', () => {
+            // Apply initial beautiful positioning
+            Object.keys(initialPositions).forEach(id => {
+                const card = document.getElementById(id);
+                if (card) {
+                    card.style.left = `${initialPositions[id].left}px`;
+                    card.style.top = `${initialPositions[id].top}px`;
+                }
+            });
+            
+            drawConnections();
+            
+            // Adjust SVG height to canvas space
+            connectionsSvg.setAttribute('width', canvas.clientWidth);
+            connectionsSvg.setAttribute('height', canvas.clientHeight);
+        });
+
+        // Recalculate connections on viewport resize
+        window.addEventListener('resize', drawConnections);
+    </script>
+</body>
+</html>
