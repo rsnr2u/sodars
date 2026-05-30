@@ -315,7 +315,10 @@ class Sprint3CampaignBookingTest extends TestCase
 
         // 2. Upload Artwork
         $this->app['auth']->forgetGuards();
-        $file = UploadedFile::fake()->create('artwork.jpg', 1200);
+        $ihdrData = pack('N', 800) . pack('N', 600) . pack('C5', 8, 2, 0, 0, 0);
+        $ihdrCrc = pack('N', crc32('IHDR' . $ihdrData));
+        $pngContent = "\x89PNG\r\n\x1a\n" . pack('N', 13) . 'IHDR' . $ihdrData . $ihdrCrc;
+        $file = UploadedFile::fake()->createWithContent('artwork.png', $pngContent);
         $artRes = $this->postJson('/api/bookings/' . $bookingId . '/artwork', [
             'artwork_file' => $file,
         ], $headers)

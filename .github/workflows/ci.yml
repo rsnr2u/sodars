@@ -1,0 +1,54 @@
+name: SODARS CI Quality Gates
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis
+        coverage: none
+
+    - name: Copy env.testing
+      run: php -r "file_exists('.env.testing') || copy('.env.example', '.env.testing');"
+
+    - name: Install Composer Dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Generate Application Key
+      run: php artisan key:generate --env=testing
+
+    - name: Run Code Style Checks (Laravel Pint)
+      run: vendor/bin/pint --test
+
+    - name: Run PHPUnit Test Suite
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: ":memory:"
+        REDIS_HOST: 127.0.0.1
+        REDIS_PORT: 6379
+        QUEUE_CONNECTION: sync
+      run: php artisan test

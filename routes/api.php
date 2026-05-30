@@ -24,7 +24,7 @@ Route::post('/providers/register', [ProviderController::class, 'register']);
 
 // User (Admin/Agent) Auth
 Route::prefix('auth')->group(function (): void {
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth');
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/profile', [AuthController::class, 'profile']);
@@ -35,7 +35,7 @@ Route::prefix('auth')->group(function (): void {
 
 // Provider Staff Auth
 Route::prefix('provider/auth')->group(function (): void {
-    Route::post('/login', [ProviderAuthController::class, 'login']);
+    Route::post('/login', [ProviderAuthController::class, 'login'])->middleware('throttle:auth');
 
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/profile', [ProviderAuthController::class, 'profile']);

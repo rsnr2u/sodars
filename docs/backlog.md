@@ -110,15 +110,15 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 7: Storage, Security, DevOps, and Quality Gates
 
-- `[ ] [Must] [S7]` Configure Cloudflare R2/AWS S3 Flysystem disks for inventory media, artwork files, proofs, provider documents, exports, and backups.
-- `[ ] [Must] [S7]` Add upload validation for MIME type, size, image dimensions, video limits, malware scanning hook, and access control.
-- `[ ] [Must] [S7]` Build Docker setup for Laravel API, web servers, portal apps, MySQL, Redis, queues, and local development.
-- `[ ] [Must] [S7]` Configure Nginx, SSL, Cloudflare, CDN, Redis, queues, Supervisor, cron jobs, and backup/restore routines.
-- `[ ] [Must] [S7]` Add API, booking engine, frontend, security, load, and QA test suites from the testing documents.
-- `[ ] [Must] [S7]` Add CI/CD pipeline with migrations, tests, linting, static analysis, build artifacts, and deployment checks.
-- `[ ] [Should] [S7]` Add monitoring for API uptime, queue failures, cron health, database errors, storage errors, and payment webhook failures.
-- `[ ] [Should] [S7]` Add security hardening: rate limits, CORS policy, input escaping, encrypted sensitive fields, audit trails, permission regression tests, and backup encryption.
-- `[ ] [Should] [S7]` Add performance work for query optimization, indexing strategy, analytics cache, read replicas, CDN caching, and load testing.
+- `[x] [Must] [S7]` Configure Cloudflare R2/AWS S3 Flysystem disks for inventory media, artwork files, proofs, provider documents, exports, and backups.
+- `[x] [Must] [S7]` Add upload validation for MIME type, size, image dimensions, video limits, malware scanning hook, and access control.
+- `[x] [Must] [S7]` Build Docker setup for Laravel API, web servers, portal apps, MySQL, Redis, queues, and local development.
+- `[x] [Must] [S7]` Configure Nginx, SSL, Cloudflare, CDN, Redis, queues, Supervisor, cron jobs, and backup/restore routines.
+- `[x] [Must] [S7]` Add API, booking engine, frontend, security, load, and QA test suites from the testing documents.
+- `[x] [Must] [S7]` Add CI/CD pipeline with migrations, tests, linting, static analysis, build artifacts, and deployment checks.
+- `[x] [Should] [S7]` Add monitoring for API uptime, queue failures, cron health, database errors, storage errors, and payment webhook failures.
+- `[x] [Should] [S7]` Add security hardening: rate limits, CORS policy, input escaping, encrypted sensitive fields, audit trails, permission regression tests, and backup encryption.
+- `[x] [Should] [S7]` Add performance work for query optimization, indexing strategy, analytics cache, read replicas, CDN caching, and load testing.
 
 ## Sprint 8: Future and Scale Capabilities
 

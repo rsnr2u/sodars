@@ -138,15 +138,19 @@ class BookingController extends Controller
         return $this->success(['booking' => $booking], 'Booking hold rejected successfully.');
     }
 
-    public function uploadArtwork(Request $request, int $id): JsonResponse
+    public function uploadArtwork(Request $request, int $id, \App\Services\UploadValidator $validator): JsonResponse
     {
         $booking = Booking::where('created_by', $request->user()->id)->findOrFail($id);
 
-        $payload = $request->validate([
-            'artwork_file' => ['required', 'file', 'max:10240'], // max 10MB
+        $request->validate([
+            'artwork_file' => ['required', 'file'],
         ]);
 
-        $path = $request->file('artwork_file')->store('artworks', 'local');
+        $file = $request->file('artwork_file');
+
+        $validator->validate($file);
+
+        $path = $file->store('artworks', 'local');
 
         $artwork = BookingArtwork::create([
             'booking_id' => $booking->id,
