@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\MarketplaceController;
+use App\Http\Controllers\Api\LeadController;
 use Illuminate\Support\Facades\Route;
 
 // Public health check
@@ -77,6 +79,14 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/bookings/{id}/artwork', [BookingController::class, 'uploadArtwork']);
     Route::post('/bookings/{id}/artwork/{artId}/approve', [BookingController::class, 'approveArtwork']);
     Route::get('/bookings/{id}/logs', [BookingController::class, 'logs']);
+
+    // CRM Leads
+    Route::get('/crm/leads', [LeadController::class, 'index']);
+    Route::post('/crm/leads', [LeadController::class, 'store']);
+    Route::get('/crm/leads/{id}', [LeadController::class, 'show']);
+    Route::put('/crm/leads/{id}', [LeadController::class, 'update']);
+    Route::put('/crm/leads/{id}/assign', [LeadController::class, 'assign']);
+    Route::post('/crm/leads/{id}/followups', [LeadController::class, 'addFollowup']);
 });
 
 // Provider Scoped Portal Endpoints
@@ -135,6 +145,10 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function (): void {
 
 // Public Marketplace
 Route::prefix('marketplace')->group(function (): void {
-    Route::get('/inventory', [InventoryController::class, 'publicIndex']);
-    Route::get('/inventory/{id}', [InventoryController::class, 'publicShow']);
+    Route::get('/inventory', [MarketplaceController::class, 'index']);
+    Route::get('/inventory/{id}', [MarketplaceController::class, 'show']);
+    Route::get('/featured', [MarketplaceController::class, 'featured']);
+    Route::get('/providers', [MarketplaceController::class, 'providers']);
+    Route::get('/cities', [MarketplaceController::class, 'cities']);
+    Route::post('/inquiries', [MarketplaceController::class, 'inquire']);
 });

@@ -74,13 +74,13 @@ The backlog follows the implementation order defined by `development_guide.md`, 
 
 ## Sprint 4: Marketplace, Search, Maps, and Lead Capture
 
-- `[ ] [Must] [S4]` Build public marketplace inventory listing, inventory detail pages, featured listings, provider directory, and city landing pages.
-- `[ ] [Must] [S4]` Build search filters for country, state, district, city, area, landmark, road, media type, price, dimensions, lighting, traffic score, and availability.
-- `[ ] [Must] [S4]` Build dynamic cascading location dropdowns on website and portal forms.
-- `[ ] [Must] [S4]` Build map view with inventory pins, coordinate display, clustered results, and nearby inventory lookup.
-- `[ ] [Must] [S4]` Build marketplace inquiries and route them into CRM leads.
-- `[ ] [Should] [S4]` Add Meilisearch indexing for marketplace search, autocomplete, fuzzy matching, and hot keyword logging.
-- `[ ] [Should] [S4]` Build `marketplace_search_logs` analytics for location/media demand.
+- `[x] [Must] [S4]` Build public marketplace inventory listing, inventory detail pages, featured listings, provider directory, and city landing pages.
+- `[x] [Must] [S4]` Build search filters for country, state, district, city, area, landmark, road, media type, price, dimensions, lighting, traffic score, and availability.
+- `[x] [Must] [S4]` Build dynamic cascading location dropdowns on website and portal forms.
+- `[x] [Must] [S4]` Build map view with inventory pins, coordinate display, clustered results, and nearby inventory lookup.
+- `[x] [Must] [S4]` Build marketplace inquiries and route them into CRM leads.
+- `[x] [Should] [S4]` Add Meilisearch indexing for marketplace search, autocomplete, fuzzy matching, and hot keyword logging.
+- `[x] [Should] [S4]` Build `marketplace_search_logs` analytics for location/media demand.
 - `[ ] [Should] [S4]` Build SEO pages, banners, blogs, testimonials, homepage sections, and featured inventory management for Admin marketplace curation.
 - `[ ] [Could] [S4]` Add route-based advertising search that groups inventory along travel corridors.
 

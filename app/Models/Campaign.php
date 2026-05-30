@@ -55,4 +55,9 @@ class Campaign extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function inquiries(): HasMany
+    {
+        return $this->hasMany(MarketplaceInquiry::class);
+    }
 }

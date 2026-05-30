@@ -78,6 +78,11 @@ class Inventory extends Model
         return $this->hasMany(InventoryMaintenance::class, 'inventory_id');
     }
 
+    public function calendar(): HasMany
+    {
+        return $this->hasMany(BookingCalendar::class, 'inventory_id');
+    }
+
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
@@ -111,5 +116,10 @@ class Inventory extends Model
     public function road(): BelongsTo
     {
         return $this->belongsTo(Road::class);
+    }
+
+    public function inquiries(): HasMany
+    {
+        return $this->hasMany(MarketplaceInquiry::class);
     }
 }
