@@ -1,18 +1,20 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\FinanceController;
+use App\Http\Controllers\Api\FranchiseAuthController;
+use App\Http\Controllers\Api\FranchiseController;
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Api\InventoryController;
+use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\LocationController;
+use App\Http\Controllers\Api\MarketplaceController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProviderAuthController;
 use App\Http\Controllers\Api\ProviderController;
-use App\Http\Controllers\Api\InventoryController;
-use App\Http\Controllers\Api\CampaignController;
-use App\Http\Controllers\Api\BookingController;
-use App\Http\Controllers\Api\MarketplaceController;
-use App\Http\Controllers\Api\LeadController;
-use App\Http\Controllers\Api\FinanceController;
-use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +42,17 @@ Route::prefix('provider/auth')->group(function (): void {
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/profile', [ProviderAuthController::class, 'profile']);
         Route::post('/logout', [ProviderAuthController::class, 'logout']);
+    });
+});
+
+// Franchise Staff Auth
+Route::prefix('franchise/auth')->group(function (): void {
+    Route::post('/login', [FranchiseAuthController::class, 'login'])->middleware('throttle:auth');
+
+    Route::middleware('auth:sanctum')->group(function (): void {
+        Route::get('/profile', [FranchiseAuthController::class, 'profile']);
+        Route::post('/change-password', [FranchiseAuthController::class, 'changePassword']);
+        Route::post('/logout', [FranchiseAuthController::class, 'logout']);
     });
 });
 
@@ -77,9 +90,13 @@ Route::prefix('locations')->group(function (): void {
 Route::middleware('auth:sanctum')->group(function (): void {
     // Campaign CRUD
     Route::apiResource('campaigns', CampaignController::class);
+    // Campaign sub-resources
+    Route::get('/campaigns/{id}/bookings', [CampaignController::class, 'bookings']);
+    Route::post('/campaigns/{id}/reconcile', [CampaignController::class, 'reconcile']);
 
-    // Booking Hold locks and creation
+    // Booking operations
     Route::post('/bookings/hold', [BookingController::class, 'store']);
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
     Route::post('/bookings/{id}/artwork', [BookingController::class, 'uploadArtwork']);
     Route::post('/bookings/{id}/artwork/{artId}/approve', [BookingController::class, 'approveArtwork']);
     Route::get('/bookings/{id}/logs', [BookingController::class, 'logs']);
@@ -163,11 +180,53 @@ Route::prefix('provider')->middleware('auth:sanctum')->group(function (): void {
 
 // Admin Scoped Portal Endpoints
 Route::prefix('admin')->middleware('auth:sanctum')->group(function (): void {
+    // Provider Management
     Route::get('/providers', [ProviderController::class, 'index']);
     Route::get('/providers/{id}', [ProviderController::class, 'show']);
     Route::post('/providers/{id}/status', [ProviderController::class, 'verifyStatus']);
     Route::post('/providers/{id}/documents/{docId}/verify', [ProviderController::class, 'verifyDocument']);
     Route::post('/providers/{id}/marketplace-enable', [ProviderController::class, 'toggleMarketplace']);
+
+    // Franchise Management
+    Route::get('/franchises', [FranchiseController::class, 'index']);
+    Route::post('/franchises', [FranchiseController::class, 'store']);
+    Route::get('/franchises/{id}', [FranchiseController::class, 'show']);
+    Route::put('/franchises/{id}', [FranchiseController::class, 'update']);
+    Route::delete('/franchises/{id}', [FranchiseController::class, 'destroy']);
+    Route::post('/franchises/{id}/status', [FranchiseController::class, 'updateStatus']);
+
+    // Franchise Staff
+    Route::get('/franchises/{id}/staff', [FranchiseController::class, 'getStaff']);
+    Route::post('/franchises/{id}/staff', [FranchiseController::class, 'storeStaff']);
+    Route::put('/franchises/{id}/staff/{staffId}', [FranchiseController::class, 'updateStaff']);
+    Route::delete('/franchises/{id}/staff/{staffId}', [FranchiseController::class, 'destroyStaff']);
+
+    // Franchise RBAC - Roles
+    Route::get('/franchises/{id}/roles', [FranchiseController::class, 'getRoles']);
+    Route::post('/franchises/{id}/roles', [FranchiseController::class, 'storeRole']);
+    Route::delete('/franchises/{id}/roles/{roleId}', [FranchiseController::class, 'destroyRole']);
+    Route::post('/franchises/{id}/roles/{roleId}/permissions/sync', [FranchiseController::class, 'syncRolePermissions']);
+
+    // Franchise RBAC - Permissions
+    Route::get('/franchise-permissions', [FranchiseController::class, 'getPermissions']);
+    Route::post('/franchise-permissions', [FranchiseController::class, 'storePermission']);
+
+    // Franchise RBAC - Staff Assignments
+    Route::post('/franchises/{id}/staff/{staffId}/assign-role', [FranchiseController::class, 'assignRole']);
+    Route::post('/franchises/{id}/staff/{staffId}/revoke-role', [FranchiseController::class, 'revokeRole']);
+    Route::post('/franchises/{id}/staff/{staffId}/grant-permission', [FranchiseController::class, 'grantPermission']);
+
+    // Campaign Management (admin overview)
+    Route::get('/campaigns', [CampaignController::class, 'adminIndex']);
+    Route::get('/campaigns/{id}', [CampaignController::class, 'adminShow']);
+    Route::post('/campaigns/{id}/status', [CampaignController::class, 'adminUpdateStatus']);
+    Route::post('/campaigns/{id}/reconcile', [CampaignController::class, 'adminReconcile']);
+
+    // Booking Management (admin overview + cancel/confirm)
+    Route::get('/bookings', [BookingController::class, 'adminIndex']);
+    Route::get('/bookings/{id}', [BookingController::class, 'adminShow']);
+    Route::post('/bookings/{id}/cancel', [BookingController::class, 'adminCancel']);
+    Route::post('/bookings/{id}/confirm', [BookingController::class, 'adminConfirm']);
 });
 
 // Public Marketplace

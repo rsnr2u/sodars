@@ -173,7 +173,7 @@ return new class extends Migration
             $table->foreignId('state_id')->constrained();
             $table->foreignId('district_id')->constrained();
             $table->foreignId('city_id')->constrained();
-            $table->foreignId('area_id')->constrained();
+            $table->foreignId('area_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('landmark_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('road_id')->nullable()->constrained()->nullOnDelete();
             $table->decimal('latitude', 10, 8);
@@ -193,7 +193,7 @@ return new class extends Migration
             $table->enum('status', ['Available', 'Reserved', 'Booked', 'Maintenance', 'Inactive', 'Blocked'])->default('Available');
             $table->timestamps();
             $table->softDeletes();
-            $table->index(['city_id', 'area_id', 'media_type', 'status'], 'inventory_search_idx');
+            $table->index(['city_id', 'media_type', 'status'], 'inventory_search_idx');
             $table->index(['latitude', 'longitude']);
         });
 
